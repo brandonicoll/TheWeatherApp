@@ -123,7 +123,7 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 override fun onFailure(t: Throwable?) {
-                    TODO("Not yet implemented")
+                    Log.e("Error", t!!.message.toString())
                 }
 
             })
