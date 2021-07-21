@@ -87,6 +87,9 @@ class MainActivity : AppCompatActivity() {
         if (Constants.isNetworkAvailable(this)) {
             //we have an internet connection
         }
+        else {
+            //no internet connection
+        }
     }
 
     private fun showRationalDialogForPermissions() {
@@ -130,6 +133,8 @@ class MainActivity : AppCompatActivity() {
 
             val longitude = mLastLocation.longitude
             Log.i("Current Longitude", "$longitude")
+
+            getLocationWeatherDetails()
         }
     }
 }
