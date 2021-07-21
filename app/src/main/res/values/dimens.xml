@@ -21,5 +21,7 @@
     <dimen name="sunrise_marginTop">10dp</dimen>
     <dimen name="divider_height">1dp</dimen>
     <dimen name="divider_margin">16dp</dimen>
+    <dimen name="identification_image_marginRight">10dp</dimen>
+    <dimen name="sunset_marginLeft">10dp</dimen>
 
 </resources>
