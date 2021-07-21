@@ -16,14 +16,15 @@ import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
 import androidx.core.content.ContextCompat.getSystemService
+import com.example.theweatherapp.models.WeatherResponse
+import com.example.theweatherapp.network.WeatherService
 import com.google.android.gms.location.*
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
-import retrofit.GsonConverterFactory
-import retrofit.Retrofit
+import retrofit.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -85,13 +86,30 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
-    private fun getLocationWeatherDetails() {
+    private fun getLocationWeatherDetails(latitude: Double, longitude: Double) {
         if (Constants.isNetworkAvailable(this)) {
 
-            val retrofit : Retrofit = Retrofit.Builder()
+            val retrofit : Retrofit = Retrofit.Builder()  //step 1
                 .baseUrl(Constants.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
+
+            val service : WeatherService = retrofit.create<WeatherService>(WeatherService::class.java) //step 2
+
+            val listCall : Call<WeatherResponse> = service.getWeather( //step 3
+                latitude, longitude, Constants.METRIC_UNIT, Constants.APP_ID
+            )
+
+            listCall.enqueue(object : Callback<WeatherResponse> {
+                override fun onResponse(response: Response<WeatherResponse>?, retrofit: Retrofit?) {
+                    TODO("Not yet implemented")
+                }
+
+                override fun onFailure(t: Throwable?) {
+                    TODO("Not yet implemented")
+                }
+
+            })
 
         }
         else {
@@ -141,7 +159,7 @@ class MainActivity : AppCompatActivity() {
             val longitude = mLastLocation.longitude
             Log.i("Current Longitude", "$longitude")
 
-            getLocationWeatherDetails()
+            getLocationWeatherDetails(latitude, longitude)
         }
     }
 }
