@@ -90,7 +90,8 @@ class MainActivity : AppCompatActivity() {
 
             val retrofit : Retrofit = Retrofit.Builder()
                 .baseUrl(Constants.BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create()).build()
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
 
         }
         else {
