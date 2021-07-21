@@ -22,6 +22,8 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
+import retrofit.GsonConverterFactory
+import retrofit.Retrofit
 
 class MainActivity : AppCompatActivity() {
 
@@ -85,7 +87,11 @@ class MainActivity : AppCompatActivity() {
 
     private fun getLocationWeatherDetails() {
         if (Constants.isNetworkAvailable(this)) {
-            //we have an internet connection
+
+            val retrofit : Retrofit = Retrofit.Builder()
+                .baseUrl(Constants.BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create()).build()
+
         }
         else {
             //no internet connection
