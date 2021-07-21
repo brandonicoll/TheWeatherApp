@@ -83,6 +83,12 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
+    private fun getLocationWeatherDetails() {
+        if (Constants.isNetworkAvailable(this)) {
+            //we have an internet connection
+        }
+    }
+
     private fun showRationalDialogForPermissions() {
         AlertDialog.Builder(this)
             .setMessage("It Looks like you have turned off permissions required for this feature. It can be enabled under Application Settings")
