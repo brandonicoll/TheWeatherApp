@@ -50,7 +50,7 @@ class MainActivity : AppCompatActivity() {
                 .withListener(object : MultiplePermissionsListener {
                     override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                         if (report!!.areAllPermissionsGranted()) {
-                            //requestLocationData()
+                            requestLocationData()
                         }
 
                         if (report.isAnyPermissionPermanentlyDenied) {
