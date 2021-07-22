@@ -45,6 +45,7 @@ class MainActivity : AppCompatActivity() {
 
     private var mProgressDialog: Dialog? = null
 
+    @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -52,6 +53,8 @@ class MainActivity : AppCompatActivity() {
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
         mSharedPreferences = getSharedPreferences(Constants.PREFERENCE_NAME, Context.MODE_PRIVATE)
+
+        setupUI()
 
         if (!isLocationEnabled()) {
             Toast.makeText(
