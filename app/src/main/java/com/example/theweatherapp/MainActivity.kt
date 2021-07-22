@@ -7,6 +7,7 @@ import android.app.Dialog
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationManager
@@ -26,6 +27,7 @@ import androidx.core.content.ContextCompat.getSystemService
 import com.example.theweatherapp.models.WeatherResponse
 import com.example.theweatherapp.network.WeatherService
 import com.google.android.gms.location.*
+import com.google.gson.Gson
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -39,6 +41,7 @@ import java.util.*
 class MainActivity : AppCompatActivity() {
 
     private lateinit var mFusedLocationClient: FusedLocationProviderClient
+    private lateinit var mSharedPreferences: SharedPreferences
 
     private var mProgressDialog: Dialog? = null
 
@@ -47,6 +50,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+
+        mSharedPreferences = getSharedPreferences(Constants.PREFERENCE_NAME, Context.MODE_PRIVATE)
 
         if (!isLocationEnabled()) {
             Toast.makeText(
@@ -140,7 +145,12 @@ class MainActivity : AppCompatActivity() {
                         hideProgressDialog()
                         val weatherList: WeatherResponse = response.body()
 
-                        setupUI(weatherList)
+                        val weatherResponseJsonString = Gson().toJson(weatherList)
+                        val editor = mSharedPreferences.edit()
+                        editor.putString(Constants.WEATHER_RESPONSE_DATA, weatherResponseJsonString)
+                        editor.apply()
+
+                        setupUI()
 
                         Log.i("Response Result", "$weatherList")
                     }
@@ -239,42 +249,49 @@ class MainActivity : AppCompatActivity() {
 
     @RequiresApi(Build.VERSION_CODES.N)
     @SuppressLint("SetTextI18n")
-    private fun setupUI(weatherList: WeatherResponse) {
+    private fun setupUI() {
 
-        // For loop to get the required data. And all are populated in the UI.
-        for (z in weatherList.weather.indices) {
-            Log.i("NAMEEEEEEEE", weatherList.weather[z].main)
+        val weatherResponseJsonString = mSharedPreferences.getString(Constants.WEATHER_RESPONSE_DATA, "")
 
-            tv_main.text = weatherList.weather[z].main
-            tv_main_description.text = weatherList.weather[z].description
-            tv_temp.text = weatherList.main.temp.toString() + getUnit(application.resources.configuration.locales.toString())
-            tv_humidity.text = weatherList.main.humidity.toString() + " per cent"
-            tv_min.text = weatherList.main.tempMin.toString() + " min"
-            tv_max.text = weatherList.main.tempMax.toString() + " max"
-            tv_speed.text = weatherList.wind.speed.toString()
-            tv_name.text = weatherList.name
-            tv_country.text = weatherList.sys.country
-            tv_sunrise_time.text = unixTime(weatherList.sys.sunrise.toLong())
-            tv_sunset_time.text = unixTime(weatherList.sys.sunset.toLong())
+        if (!weatherResponseJsonString.isNullOrEmpty()) {
+            val weatherList = Gson().fromJson(weatherResponseJsonString, WeatherResponse::class.java)
 
-            // Here we update the main icon
-            when (weatherList.weather[z].icon) {
-                "01d" -> iv_main.setImageResource(R.drawable.sunny)
-                "02d" -> iv_main.setImageResource(R.drawable.cloud)
-                "03d" -> iv_main.setImageResource(R.drawable.cloud)
-                "04d" -> iv_main.setImageResource(R.drawable.cloud)
-                "04n" -> iv_main.setImageResource(R.drawable.cloud)
-                "10d" -> iv_main.setImageResource(R.drawable.rain)
-                "11d" -> iv_main.setImageResource(R.drawable.storm)
-                "13d" -> iv_main.setImageResource(R.drawable.snowflake)
-                "01n" -> iv_main.setImageResource(R.drawable.cloud)
-                "02n" -> iv_main.setImageResource(R.drawable.cloud)
-                "03n" -> iv_main.setImageResource(R.drawable.cloud)
-                "10n" -> iv_main.setImageResource(R.drawable.cloud)
-                "11n" -> iv_main.setImageResource(R.drawable.rain)
-                "13n" -> iv_main.setImageResource(R.drawable.snowflake)
+            // For loop to get the required data. And all are populated in the UI.
+            for (z in weatherList.weather.indices) {
+                Log.i("NAMEEEEEEEE", weatherList.weather[z].main)
+
+                tv_main.text = weatherList.weather[z].main
+                tv_main_description.text = weatherList.weather[z].description
+                tv_temp.text = weatherList.main.temp.toString() + getUnit(application.resources.configuration.locales.toString())
+                tv_humidity.text = weatherList.main.humidity.toString() + " per cent"
+                tv_min.text = weatherList.main.tempMin.toString() + " min"
+                tv_max.text = weatherList.main.tempMax.toString() + " max"
+                tv_speed.text = weatherList.wind.speed.toString()
+                tv_name.text = weatherList.name
+                tv_country.text = weatherList.sys.country
+                tv_sunrise_time.text = unixTime(weatherList.sys.sunrise.toLong())
+                tv_sunset_time.text = unixTime(weatherList.sys.sunset.toLong())
+
+                // Here we update the main icon
+                when (weatherList.weather[z].icon) {
+                    "01d" -> iv_main.setImageResource(R.drawable.sunny)
+                    "02d" -> iv_main.setImageResource(R.drawable.cloud)
+                    "03d" -> iv_main.setImageResource(R.drawable.cloud)
+                    "04d" -> iv_main.setImageResource(R.drawable.cloud)
+                    "04n" -> iv_main.setImageResource(R.drawable.cloud)
+                    "10d" -> iv_main.setImageResource(R.drawable.rain)
+                    "11d" -> iv_main.setImageResource(R.drawable.storm)
+                    "13d" -> iv_main.setImageResource(R.drawable.snowflake)
+                    "01n" -> iv_main.setImageResource(R.drawable.cloud)
+                    "02n" -> iv_main.setImageResource(R.drawable.cloud)
+                    "03n" -> iv_main.setImageResource(R.drawable.cloud)
+                    "10n" -> iv_main.setImageResource(R.drawable.cloud)
+                    "11n" -> iv_main.setImageResource(R.drawable.rain)
+                    "13n" -> iv_main.setImageResource(R.drawable.snowflake)
+                }
             }
         }
+
     }
 
     /**
