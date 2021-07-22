@@ -16,6 +16,8 @@ import android.os.Bundle
 import android.os.Looper
 import android.provider.Settings
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat.getSystemService
@@ -82,6 +84,23 @@ class MainActivity : AppCompatActivity() {
                 }).onSameThread()
                 .check()
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+
+        when (item.itemId) {
+            R.id.action_refresh -> {
+                //refresh
+                requestLocationData()
+            }
+        }
+
+        return super.onOptionsItemSelected(item)
     }
 
 
